@@ -1,0 +1,18 @@
+image: Visual Studio 2017
+
+build_script:
+  - nuget restore -Verbosity quiet
+  - msbuild /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+
+after_test:
+  - ps: Vsix-PushArtifacts | Vsix-PublishToGallery
+
+before_deploy:
+  - ps: Vsix-CreateChocolatyPackage -packageId addnewfile
+
+deploy:
+  - provider: Environment
+    name: Chocolatey
+    on:
+      branch: master
+      appveyor_repo_commit_message_extended: /\[release\]/
