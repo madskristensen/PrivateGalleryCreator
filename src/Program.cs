@@ -23,7 +23,7 @@ namespace PrivateGalleryCreator
             File.WriteAllText(feedUrl, xml, Encoding.UTF8);
 
             Console.WriteLine();
-            Console.WriteLine($"Feed generated completed");
+            Console.WriteLine($"feed.xml generated successfully");
             Console.WriteLine("Press any key to close...");
             Console.ReadKey(true);
         }
