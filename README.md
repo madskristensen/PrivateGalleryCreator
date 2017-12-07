@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/o9t6axyr7n989v75?svg=true)](https://ci.appveyor.com/project/madskristensen/privategallerycreator)
 
-[Go to download site](https://ci.appveyor.com/project/madskristensen/privategallerycreator/build/artifacts)
+Download from [build server](https://ci.appveyor.com/project/madskristensen/privategallerycreator/build/artifacts)
 
 -----------------------------
 
