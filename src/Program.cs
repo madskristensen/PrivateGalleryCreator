@@ -23,7 +23,9 @@ namespace PrivateGalleryCreator
             File.WriteAllText(feedUrl, xml, Encoding.UTF8);
 
             Console.WriteLine();
-            Console.WriteLine($"Feed generated ({packages.Count()} extensions)");
+            Console.WriteLine($"Feed generated completed");
+            Console.WriteLine("Press any key to close...");
+            Console.ReadKey(true);
         }
 
         private static Package ProcessVsix(string sourceVsixPath)
