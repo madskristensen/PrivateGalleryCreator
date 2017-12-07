@@ -29,6 +29,10 @@ You can now add the gallery to Visual Studio to have the extensions automaticall
 
 The **URL** should be the absolute path to the *feed.xml* file. The path can be a network share (e.g. \\\\mycompany\extensions\feed.xml).
 
+Going to **Tools -> Extensions and Updates...** will now show the private gallery under the **Online** tab:
+
+![Extensions dialog](art/extension-dialog.png)
+
 ## Good to know
 
 * Run the *PrivateGalleryCreator.exe* every time you add or update a .vsix in the directory
