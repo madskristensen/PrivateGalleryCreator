@@ -3,5 +3,5 @@ build:
   verbosity: minimal
 
 artifacts:
-  - path: *.exe
+  - path: '**\*.exe'
     name: Executable
