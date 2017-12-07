@@ -23,7 +23,7 @@ namespace PrivateGalleryCreator
             File.WriteAllText(feedUrl, xml, Encoding.UTF8);
 
             Console.WriteLine();
-            Console.WriteLine("Feed generated (" + packages.Count() + " extensions)");
+            Console.WriteLine($"Feed generated ({packages.Count()} extensions)");
         }
 
         private static Package ProcessVsix(string sourceVsixPath)
@@ -55,7 +55,7 @@ namespace PrivateGalleryCreator
                     File.Copy(sourceIconPath, icon, true);
                 }
 
-                Console.WriteLine("Parsed " + package.FileName);
+                Console.WriteLine($"Parsed {package.FileName}");
 
                 return package;
             }
