@@ -47,7 +47,7 @@ namespace PrivateGalleryCreator
 			package.Description = ParseNode(doc, "Description", true);
 			package.Version = new Version(ParseNode(doc, "Identity", true, "Version")).ToString();
 			package.Author = ParseNode(doc, "Identity", true, "Publisher");
-			package.Icon = ParseNode(doc, "Icon", false).Replace('\\', '/');
+			package.Icon = ParseNode(doc, "Icon", false);
 			package.Preview = ParseNode(doc, "PreviewImage", false);
 			package.Tags = ParseNode(doc, "Tags", false);
 			package.DatePublished = DateTime.UtcNow;
