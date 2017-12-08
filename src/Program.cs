@@ -9,25 +9,69 @@ namespace PrivateGalleryCreator
     class Program
     {
         const string _xmlFileName = "feed.xml";
+        private static string _dir;
 
         static void Main(string[] args)
         {
-            string dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            _dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            var packages = Directory.GetFiles(dir, "*.vsix", SearchOption.TopDirectoryOnly)
-                                    .Select(f => ProcessVsix(f))
-                                    .ToArray();
+            GenerateAtomFeed();
+
+            if (args.Contains("--watch") || args.Contains("-w"))
+            {
+                WatchDirectoryForChanges();
+            }
+            else
+            {
+                Console.WriteLine("Press any key to close...");
+                Console.ReadKey(true);
+            }
+        }
+
+        private static void WatchDirectoryForChanges()
+        {
+            var fsw = new FileSystemWatcher(_dir, "*.vsix");
+            fsw.Changed += FileChanged;
+            fsw.Created += FileChanged;
+            fsw.Deleted += FileChanged;
+            fsw.Renamed += FileChanged;
+            fsw.IncludeSubdirectories = false;
+            fsw.EnableRaisingEvents = true;
+
+            Console.WriteLine("Watching for file changes...");
+
+            while (true)
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+        private static void FileChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                GenerateAtomFeed();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
+            }
+        }
+
+        private static void GenerateAtomFeed()
+        {
+            var packages = Directory.GetFiles(_dir, "*.vsix", SearchOption.TopDirectoryOnly)
+                                                .Select(f => ProcessVsix(f))
+                                                .ToArray();
 
             var writer = new FeedWriter();
-            var feedUrl = Path.Combine(dir,_xmlFileName);
+            var feedUrl = Path.Combine(_dir, _xmlFileName);
             string xml = writer.GetFeed(feedUrl, packages);
 
             File.WriteAllText(feedUrl, xml, Encoding.UTF8);
 
             Console.WriteLine();
             Console.WriteLine($"{_xmlFileName} generated successfully");
-            Console.WriteLine("Press any key to close...");
-            Console.ReadKey(true);
         }
 
         private static Package ProcessVsix(string sourceVsixPath)

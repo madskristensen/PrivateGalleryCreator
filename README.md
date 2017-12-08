@@ -33,6 +33,15 @@ Going to **Tools -> Extensions and Updates...** will now show the private galler
 
 ![Extensions dialog](art/extension-dialog.png)
 
+## Watch option
+You can make the app watch for changes to any .vsix files in the directory and automatically generate a new *feed.xml* file. To do that, call the exe with the `--watch` (`-w`) parameter like so:
+
+```cmd
+PrivateGalleryCreator.exe -w
+```
+
+The console app will not shut down but continously watch the directory for any new, updated or deleted .vsix files. To stop watching, either close the console or hit *Ctrl+C* to cancel out.
+
 ## Good to know
 
 * Run the *PrivateGalleryCreator.exe* every time you add or update a .vsix in the directory
