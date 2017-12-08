@@ -8,6 +8,8 @@ namespace PrivateGalleryCreator
 {
     class Program
     {
+        const string _xmlFileName = "feed.xml";
+
         static void Main(string[] args)
         {
             string dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -17,13 +19,13 @@ namespace PrivateGalleryCreator
                                     .ToArray();
 
             var writer = new FeedWriter();
-            var feedUrl = Path.Combine(dir, "feed.xml");
+            var feedUrl = Path.Combine(dir,_xmlFileName);
             string xml = writer.GetFeed(feedUrl, packages);
 
             File.WriteAllText(feedUrl, xml, Encoding.UTF8);
 
             Console.WriteLine();
-            Console.WriteLine($"feed.xml generated successfully");
+            Console.WriteLine($"{_xmlFileName} generated successfully");
             Console.WriteLine("Press any key to close...");
             Console.ReadKey(true);
         }
