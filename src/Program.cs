@@ -45,16 +45,20 @@ namespace PrivateGalleryCreator
                 {
                     string currentDir = Path.GetDirectoryName(sourceVsixPath);
                     string sourceIconPath = Path.Combine(tempFolder, package.Icon);
-                    string iconDir = Path.Combine(currentDir, "icons");
-                    string icon = Path.Combine(iconDir, package.ID + Path.GetExtension(package.Icon));
 
-                    if (!Directory.Exists(iconDir))
+                    if (File.Exists(sourceIconPath))
                     {
-                        var dir = Directory.CreateDirectory(iconDir);
-                        dir.Attributes |= FileAttributes.Hidden;
-                    }
+                        string iconDir = Path.Combine(currentDir, "icons");
+                        string icon = Path.Combine(iconDir, package.ID + Path.GetExtension(package.Icon));
 
-                    File.Copy(sourceIconPath, icon, true);
+                        if (!Directory.Exists(iconDir))
+                        {
+                            var dir = Directory.CreateDirectory(iconDir);
+                            dir.Attributes |= FileAttributes.Hidden;
+                        }
+
+                        File.Copy(sourceIconPath, icon, true);
+                    }
                 }
 
                 Console.WriteLine($"Parsed {package.FileName}");
