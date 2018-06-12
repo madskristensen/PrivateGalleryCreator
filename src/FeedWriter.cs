@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -10,13 +11,13 @@ namespace PrivateGalleryCreator
     {
         public string GetFeed(string fileName, IEnumerable<Package> packages)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriterSettings settings = new XmlWriterSettings
+            var sb = new StringBuilder();
+            var settings = new XmlWriterSettings
             {
                 Indent = true
             };
 
-            using (XmlWriter writer = XmlWriter.Create(sb, settings))
+            using (var writer = XmlWriter.Create(sb, settings))
             {
                 writer.WriteStartElement("feed", "http://www.w3.org/2005/Atom");
 
@@ -82,11 +83,6 @@ namespace PrivateGalleryCreator
                 writer.WriteEndElement(); // icon
             }
 
-            //writer.WriteStartElement("link");
-            //writer.WriteAttributeString("rel", "previewimage");
-            //writer.WriteAttributeString("href", baseUrl + "/extensions/" + package.ID + "/" + package.Preview);
-            //writer.WriteEndElement(); // preview
-
             writer.WriteRaw("\r\n<Vsix xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"http://schemas.microsoft.com/developer/vsx-syndication-schema/2010\">\r\n");
 
             writer.WriteElementString("Id", package.ID);
@@ -94,6 +90,16 @@ namespace PrivateGalleryCreator
 
             writer.WriteStartElement("References");
             writer.WriteEndElement();
+
+            writer.WriteRaw("\r\n<Rating xsi:nil=\"true\" />");
+            writer.WriteRaw("\r\n<RatingCount xsi:nil=\"true\" />");
+            writer.WriteRaw("\r\n<DownloadCount xsi:nil=\"true\" />\r\n");
+
+            if (package.ExtensionList?.Extensions != null)
+            {
+                string ids = string.Join(";", package.ExtensionList.Extensions.Select(e => e.VsixId));
+                writer.WriteElementString("PackedExtensionIDs", ids);
+            }
 
             writer.WriteRaw("</Vsix>");// Vsix
             writer.WriteEndElement(); // entry

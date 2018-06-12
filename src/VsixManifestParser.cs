@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace PrivateGalleryCreator
 {
-	public class VsixManifestParser
+    public class VsixManifestParser
 	{
 		public Package CreateFromManifest(string tempFolder, string vsixFileName)
 		{
 			string xml = File.ReadAllText(Path.Combine(tempFolder, "extension.vsixmanifest"));
 			xml = Regex.Replace(xml, "( xmlns(:\\w+)?)=\"([^\"]+)\"", string.Empty);
 
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			doc.LoadXml(xml);
 
-			Package package = new Package(vsixFileName);
+			var package = new Package(vsixFileName);
 
 			if (doc.GetElementsByTagName("DisplayName").Count > 0)
 			{
@@ -37,8 +40,27 @@ namespace PrivateGalleryCreator
 				}
 			}
 
+            AddExtensionList(package, tempFolder);
+
 			return package;
 		}
+
+        private void AddExtensionList(Package package, string tempFolder)
+        {
+            string vsext = Directory.EnumerateFiles(tempFolder, "*.vsext", SearchOption.AllDirectories).FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(vsext))
+            {
+                string json = File.ReadAllText(vsext);
+
+                using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+                {
+                    var serializer = new DataContractJsonSerializer(typeof(ExtensionList));
+                    var list = (ExtensionList)serializer.ReadObject(ms);
+                    package.ExtensionList = list;
+                }
+            }
+        }
 
 		private void Vs2012Format(XmlDocument doc, Package package)
 		{
@@ -80,7 +102,7 @@ namespace PrivateGalleryCreator
 			if (list.Count == 0)
 				list = doc.GetElementsByTagName("<VisualStudio");
 
-			List<string> versions = new List<string>();
+			var versions = new List<string>();
 
 			foreach (XmlNode node in list)
 			{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -60,12 +61,11 @@ namespace PrivateGalleryCreator
 
         private static void GenerateAtomFeed()
         {
-            var packages = Directory.GetFiles(_dir, "*.vsix", SearchOption.TopDirectoryOnly)
-                                                .Select(f => ProcessVsix(f))
-                                                .ToArray();
+            IEnumerable<Package> packages = Directory.EnumerateFiles(_dir, "*.vsix", SearchOption.TopDirectoryOnly)
+                                                .Select(f => ProcessVsix(f));
 
             var writer = new FeedWriter();
-            var feedUrl = Path.Combine(_dir, _xmlFileName);
+            string feedUrl = Path.Combine(_dir, _xmlFileName);
             string xml = writer.GetFeed(feedUrl, packages);
 
             File.WriteAllText(feedUrl, xml, Encoding.UTF8);
@@ -78,14 +78,15 @@ namespace PrivateGalleryCreator
         {
             string temp = Path.GetTempPath();
             string tempFolder = Path.Combine(temp, Guid.NewGuid().ToString());
-
+            
             try
             {
                 Directory.CreateDirectory(tempFolder);
                 ZipFile.ExtractToDirectory(sourceVsixPath, tempFolder);
 
-                VsixManifestParser parser = new VsixManifestParser();
+                var parser = new VsixManifestParser();
                 Package package = parser.CreateFromManifest(tempFolder, sourceVsixPath);
+                
 
                 if (!string.IsNullOrEmpty(package.Icon))
                 {
@@ -99,7 +100,7 @@ namespace PrivateGalleryCreator
 
                         if (!Directory.Exists(iconDir))
                         {
-                            var dir = Directory.CreateDirectory(iconDir);
+                            DirectoryInfo dir = Directory.CreateDirectory(iconDir);
                             dir.Attributes |= FileAttributes.Hidden;
                         }
 

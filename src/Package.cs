@@ -28,6 +28,7 @@ namespace PrivateGalleryCreator
         public string MoreInfoUrl { get; set; }
 		public string Repo { get; set; }
 		public string IssueTracker { get; set; }
+        public ExtensionList ExtensionList { get; set; }
 
 		public override string ToString()
 		{
