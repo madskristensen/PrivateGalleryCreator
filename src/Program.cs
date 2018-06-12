@@ -7,25 +7,30 @@ using System.Text;
 
 namespace PrivateGalleryCreator
 {
-    class Program
+    internal class Program
     {
-        const string _xmlFileName = "feed.xml";
+        private const string _xmlFileName = "feed.xml";
         private static string _dir;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             _dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             GenerateAtomFeed();
 
-            if (args.Contains("--watch") || args.Contains("-w"))
+            switch (args)
             {
-                WatchDirectoryForChanges();
-            }
-            else
-            {
-                Console.WriteLine("Press any key to close...");
-                Console.ReadKey(true);
+                case var a when (a.Contains("--watch") || a.Contains("-w")):
+                    WatchDirectoryForChanges();
+                    break;
+
+                case var a when (a.Contains("--terminate") || a.Contains("-t")):
+                    break;
+
+                default:
+                    Console.WriteLine("Press any key to close...");
+                    Console.ReadKey(true);
+                    break;
             }
         }
 
