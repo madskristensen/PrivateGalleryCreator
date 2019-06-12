@@ -42,6 +42,13 @@ PrivateGalleryCreator.exe -w
 
 The console app will not shut down but continously watch the directory for any new, updated or deleted .vsix files. To stop watching, either close the console or hit *Ctrl+C* to cancel out.
 
+## Name option
+If you would like a custom gallery name (instead of "VSIX Gallery") you can user the --name option:
+
+```cmd
+PrivateGalleryCreator.exe --name="My gallery name"
+```
+
 ## Good to know
 
 * Run the *PrivateGalleryCreator.exe* every time you add or update a .vsix in the directory
