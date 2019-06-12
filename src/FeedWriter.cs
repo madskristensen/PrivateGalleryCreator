@@ -9,6 +9,12 @@ namespace PrivateGalleryCreator
 {
     public class FeedWriter
     {
+    private readonly string galleryTitle;
+
+    public FeedWriter(string galleryTitle)
+    {
+      this.galleryTitle = galleryTitle;
+    }
         public string GetFeed(string fileName, IEnumerable<Package> packages)
         {
             var sb = new StringBuilder();
@@ -21,7 +27,7 @@ namespace PrivateGalleryCreator
             {
                 writer.WriteStartElement("feed", "http://www.w3.org/2005/Atom");
 
-                writer.WriteElementString("title", "VSIX Gallery");
+                writer.WriteElementString("title", galleryTitle);
                 writer.WriteElementString("id", "5a7c2525-ddd8-4c44-b2e3-f57ba01a0d81");
                 writer.WriteElementString("updated", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"));
                 writer.WriteElementString("subtitle", "Add this feed to Visual Studio's extension manager from Tools -> Options -> Environment -> Extensions and Updates");
