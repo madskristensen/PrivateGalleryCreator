@@ -54,3 +54,6 @@ PrivateGalleryCreator.exe --name="My gallery name"
 * Run the *PrivateGalleryCreator.exe* every time you add or update a .vsix in the directory
 * Visual Studio will by default auto-update extensions - including the ones from private galleries.
 * The feed support extensions for Visual Studio 2010 and newer
+
+## License
+[Apache 2.0](LICENSE)
