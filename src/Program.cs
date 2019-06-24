@@ -13,7 +13,8 @@ namespace PrivateGalleryCreator
     private static string _dir;
     private static string _galleryName;
     private static bool _recursive = false;
-    internal static string _outputFile;
+    private static string _outputFile;
+    private static string _exclude = string.Empty;
 
     private static void Main(string[] args)
     {
@@ -21,7 +22,9 @@ namespace PrivateGalleryCreator
 
       _recursive = args.Any(a => a == "--recursive");
 
-      _outputFile = args.FirstOrDefault(a => a.StartsWith("--output="))?.Replace("--output=", string.Empty) ?? Path.Combine(_dir, _xmlFileName); ;
+      _outputFile = args.FirstOrDefault(a => a.StartsWith("--output="))?.Replace("--output=", string.Empty) ?? Path.Combine(_dir, _xmlFileName);
+
+      _exclude = args.FirstOrDefault(a => a.StartsWith("--exclude="))?.Replace("--exclude=", string.Empty) ?? string.Empty;
 
       _galleryName = args.FirstOrDefault(a => a.StartsWith("--name="))?.Replace("--name=", string.Empty) ?? "VSIX Gallery";
 
@@ -75,7 +78,7 @@ namespace PrivateGalleryCreator
 
     private static void GenerateAtomFeed()
     {
-      IEnumerable<Package> packages = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct()
+      IEnumerable<Package> packages = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct().Where(f => !f.FullName.Contains(_exclude))
                                           .Select(f => ProcessVsix(f.FullName));
 
       var writer = new FeedWriter(_galleryName);

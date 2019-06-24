@@ -85,7 +85,7 @@ namespace PrivateGalleryCreator
             {
                 writer.WriteStartElement("link");
                 writer.WriteAttributeString("rel", "icon");
-                writer.WriteAttributeString("href", Path.GetDirectoryName( Program._outputFile) + "\\icons\\" + package.ID + Path.GetExtension(package.Icon));
+                writer.WriteAttributeString("href", "icons\\" + package.ID + Path.GetExtension(package.Icon));
                 writer.WriteEndElement(); // icon
             }
 
