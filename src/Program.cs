@@ -12,10 +12,19 @@ namespace PrivateGalleryCreator
     private const string _xmlFileName = "feed.xml";
     private static string _dir;
     private static string _galleryName;
+    private static bool _recursive = false;
+    private static string _outputFile;
+    private static string _exclude = string.Empty;
 
     private static void Main(string[] args)
     {
-      _dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+      _dir = args.FirstOrDefault(a => a.StartsWith("--input="))?.Replace("--input=", string.Empty) ?? Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+      _recursive = args.Any(a => a == "--recursive");
+
+      _outputFile = args.FirstOrDefault(a => a.StartsWith("--output="))?.Replace("--output=", string.Empty) ?? Path.Combine(_dir, _xmlFileName);
+
+      _exclude = args.FirstOrDefault(a => a.StartsWith("--exclude="))?.Replace("--exclude=", string.Empty) ?? string.Empty;
 
       _galleryName = args.FirstOrDefault(a => a.StartsWith("--name="))?.Replace("--name=", string.Empty) ?? "VSIX Gallery";
 
@@ -69,11 +78,11 @@ namespace PrivateGalleryCreator
 
     private static void GenerateAtomFeed()
     {
-      IEnumerable<Package> packages = Directory.EnumerateFiles(_dir, "*.vsix", SearchOption.TopDirectoryOnly)
-                                          .Select(f => ProcessVsix(f));
+      IEnumerable<Package> packages = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct().Where(f => !f.FullName.Contains(_exclude))
+                                          .Select(f => ProcessVsix(f.FullName));
 
       var writer = new FeedWriter(_galleryName);
-      string feedUrl = Path.Combine(_dir, _xmlFileName);
+      string feedUrl = _outputFile;
       string xml = writer.GetFeed(feedUrl, packages);
 
       File.WriteAllText(feedUrl, xml, Encoding.UTF8);
@@ -98,7 +107,7 @@ namespace PrivateGalleryCreator
 
         if (!string.IsNullOrEmpty(package.Icon))
         {
-          string currentDir = Path.GetDirectoryName(sourceVsixPath);
+          string currentDir = Path.GetDirectoryName(_outputFile);
           string sourceIconPath = Path.Combine(tempFolder, package.Icon);
 
           if (File.Exists(sourceIconPath))
@@ -124,6 +133,48 @@ namespace PrivateGalleryCreator
       {
         Directory.Delete(tempFolder, true);
       }
+    }
+
+    public static IEnumerable<FileInfo> EnumerateFilesSafe(DirectoryInfo dir, string filter = "*.*", SearchOption opt = SearchOption.TopDirectoryOnly)
+    {
+      var retval = Enumerable.Empty<FileInfo>();
+
+      try
+      {
+        retval = dir.EnumerateFiles(filter, SearchOption.TopDirectoryOnly);
+      }
+      catch
+      {
+        Console.WriteLine("{0} Inaccessable.", dir.FullName);
+      }
+
+      if (opt == SearchOption.AllDirectories)
+      {
+        retval = retval.Concat(EnumerateDirectoriesSafe(dir, opt: opt).SelectMany(x => EnumerateFilesSafe(x, filter, SearchOption.TopDirectoryOnly)));
+      }
+
+      return retval;
+    }
+
+    public static IEnumerable<DirectoryInfo> EnumerateDirectoriesSafe(DirectoryInfo dir, string filter = "*.*", SearchOption opt = SearchOption.TopDirectoryOnly)
+    {
+      var retval = Enumerable.Empty<DirectoryInfo>();
+
+      try
+      {
+        retval = dir.EnumerateDirectories(filter, SearchOption.TopDirectoryOnly);
+      }
+      catch
+      {
+        Console.WriteLine("{0} Inaccessable.", dir.FullName);
+      }
+
+      if (opt == SearchOption.AllDirectories)
+      {
+        retval = retval.Concat(retval.SelectMany(x => EnumerateDirectoriesSafe(x, filter, opt)));
+      }
+
+      return retval;
     }
   }
 }

@@ -78,14 +78,14 @@ namespace PrivateGalleryCreator
 
             writer.WriteStartElement("content");
             writer.WriteAttributeString("type", "application/octet-stream");
-            writer.WriteAttributeString("src", package.FileName);
+            writer.WriteAttributeString("src", package.FullPath);
             writer.WriteEndElement(); // content
 
             if (!string.IsNullOrEmpty(package.Icon))
             {
                 writer.WriteStartElement("link");
                 writer.WriteAttributeString("rel", "icon");
-                writer.WriteAttributeString("href", "icons/" + package.ID + Path.GetExtension(package.Icon));
+                writer.WriteAttributeString("href", "icons\\" + package.ID + Path.GetExtension(package.Icon));
                 writer.WriteEndElement(); // icon
             }
 

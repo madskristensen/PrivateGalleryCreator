@@ -100,7 +100,7 @@ namespace PrivateGalleryCreator
 			XmlNodeList list = doc.GetElementsByTagName("InstallationTarget");
 
 			if (list.Count == 0)
-				list = doc.GetElementsByTagName("<VisualStudio");
+				list = doc.GetElementsByTagName("VisualStudio");
 
 			var versions = new List<string>();
 

@@ -8,6 +8,7 @@ namespace PrivateGalleryCreator
     {
         public Package(string fileName)
         {
+            FullPath = fileName;
             FileName = Path.GetFileName(fileName);
         }
 
@@ -29,6 +30,7 @@ namespace PrivateGalleryCreator
 		public string Repo { get; set; }
 		public string IssueTracker { get; set; }
         public ExtensionList ExtensionList { get; set; }
+        public string FullPath { get; set; }
 
 		public override string ToString()
 		{
