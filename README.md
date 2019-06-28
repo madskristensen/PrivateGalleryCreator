@@ -43,10 +43,38 @@ PrivateGalleryCreator.exe -w
 The console app will not shut down but continously watch the directory for any new, updated or deleted .vsix files. To stop watching, either close the console or hit *Ctrl+C* to cancel out.
 
 ## Name option
-If you would like a custom gallery name (instead of "VSIX Gallery") you can user the --name option:
+If you would like a custom gallery name (instead of "VSIX Gallery") you can use the --name option:
 
 ```cmd
 PrivateGalleryCreator.exe --name="My gallery name"
+```
+
+## Output option
+If you would like to have the output redirected (instead of the current directory) you can use the --output option:
+
+```cmd
+PrivateGalleryCreator.exe --output=c:\your\path\yourfeed.xml
+```
+
+## Input option
+If you would like to have the input directory set custom (instead of the current directory) you can use the --input option:
+
+```cmd
+PrivateGalleryCreator.exe --input=c:\your\input\path 
+```
+
+## Recursive option
+If you would like to have the all directories parsed for packages (instead of the current directory) you can use the --recursive option:
+
+```cmd
+PrivateGalleryCreator.exe --recursive
+```
+
+## Exclude option
+If you would like to have the particular folders, filenames skipped (instead of the using all packages found) you can use the --exclude option:
+
+```cmd
+PrivateGalleryCreator.exe --exclude=dontwantthis
 ```
 
 ## Good to know
