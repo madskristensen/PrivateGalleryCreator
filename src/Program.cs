@@ -78,17 +78,17 @@ namespace PrivateGalleryCreator
 
     private static void GenerateAtomFeed()
     {
-      IEnumerable<Package> packages = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct().Where(f => !f.FullName.Contains(_exclude))
-                                          .Select(f => ProcessVsix(f.FullName));
+      var packages = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct();
+      var filteredPackages = string.IsNullOrEmpty(_exclude) ? packages : packages.Where(f => !f.FullName.Contains(_exclude));
 
       var writer = new FeedWriter(_galleryName);
       string feedUrl = _outputFile;
-      string xml = writer.GetFeed(feedUrl, packages);
+      string xml = writer.GetFeed(feedUrl, filteredPackages.Select(f => ProcessVsix(f.FullName)));
 
       File.WriteAllText(feedUrl, xml, Encoding.UTF8);
 
       Console.WriteLine();
-      Console.WriteLine($"{_xmlFileName} generated successfully");
+      Console.WriteLine($"{_outputFile} generated successfully");
     }
 
     private static Package ProcessVsix(string sourceVsixPath)
