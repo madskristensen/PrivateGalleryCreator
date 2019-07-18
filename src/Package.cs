@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace PrivateGalleryCreator
 {
 	public class Package
     {
-        public Package(string fileName)
+        public Package(string fileName, string fullSourcePath)
         {
-            FullPath = fileName;
-            FileName = Path.GetFileName(fileName);
+            FileName = fileName;
+            FullPath = fullSourcePath;
         }
 
         public string FileName { get; set; }

@@ -11,7 +11,7 @@ namespace PrivateGalleryCreator
 {
     public class VsixManifestParser
 	{
-		public Package CreateFromManifest(string tempFolder, string vsixFileName)
+		public Package CreateFromManifest(string tempFolder, string vsixFileName, string vsixSource)
 		{
 			string xml = File.ReadAllText(Path.Combine(tempFolder, "extension.vsixmanifest"));
 			xml = Regex.Replace(xml, "( xmlns(:\\w+)?)=\"([^\"]+)\"", string.Empty);
@@ -19,7 +19,7 @@ namespace PrivateGalleryCreator
 			var doc = new XmlDocument();
 			doc.LoadXml(xml);
 
-			var package = new Package(vsixFileName);
+			var package = new Package(vsixFileName, vsixSource);
 
 			if (doc.GetElementsByTagName("DisplayName").Count > 0)
 			{
