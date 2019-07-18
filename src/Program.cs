@@ -16,6 +16,11 @@ namespace PrivateGalleryCreator
     private static string _outputFile;
     private static string _exclude = string.Empty;
 
+    /// <summary>
+    /// When not empty, this folder path will be used as download source for the extensions.
+    /// </summary>
+    private static string _source;
+
     private static void Main(string[] args)
     {
       _dir = args.FirstOrDefault(a => a.StartsWith("--input="))?.Replace("--input=", string.Empty) ?? Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -27,6 +32,8 @@ namespace PrivateGalleryCreator
       _exclude = args.FirstOrDefault(a => a.StartsWith("--exclude="))?.Replace("--exclude=", string.Empty) ?? string.Empty;
 
       _galleryName = args.FirstOrDefault(a => a.StartsWith("--name="))?.Replace("--name=", string.Empty) ?? "VSIX Gallery";
+
+      _source = args.FirstOrDefault(a => a.StartsWith("--source="))?.Replace("--source=", string.Empty) ?? string.Empty;
 
       GenerateAtomFeed();
 
@@ -101,8 +108,10 @@ namespace PrivateGalleryCreator
         Directory.CreateDirectory(tempFolder);
         ZipFile.ExtractToDirectory(sourceVsixPath, tempFolder);
 
+        var vsixFile = Path.GetFileName(sourceVsixPath);
+        var vsixSourcePath = string.IsNullOrEmpty(_source) ? sourceVsixPath : Path.Combine(_source, vsixFile);
         var parser = new VsixManifestParser();
-        Package package = parser.CreateFromManifest(tempFolder, sourceVsixPath);
+        Package package = parser.CreateFromManifest(tempFolder, vsixFile, vsixSourcePath);
 
 
         if (!string.IsNullOrEmpty(package.Icon))
