@@ -77,6 +77,13 @@ If you would like to have the particular folders, filenames skipped (instead of 
 PrivateGalleryCreator.exe --exclude=dontwantthis
 ```
 
+## Source option
+Be default, the download source path used in the gallery will be the location where the .vsix files reside when running the PrivateGalleryCreator. If you intend to move the .vsix files after creating the feed, you can specify the intended download source path with the --source option:
+
+```cmd
+PrivateGalleryCreator.exe --source=c:\your\vsix\repository\
+```
+
 ## Good to know
 
 * Run the *PrivateGalleryCreator.exe* every time you add or update a .vsix in the directory
