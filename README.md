@@ -89,6 +89,7 @@ PrivateGalleryCreator.exe --source=c:\your\vsix\repository\
 * Run the *PrivateGalleryCreator.exe* every time you add or update a .vsix in the directory
 * Visual Studio will by default auto-update extensions - including the ones from private galleries.
 * The feed support extensions for Visual Studio 2010 and newer
+* Use an extension to create the private gallery. See [example extension here](https://github.com/madskristensen/VsixGalleryExtension/blob/master/src/feed.pkgdef).
 
 ## License
 [Apache 2.0](LICENSE)
