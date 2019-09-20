@@ -78,10 +78,24 @@ PrivateGalleryCreator.exe --exclude=dontwantthis
 ```
 
 ## Source option
-Be default, the download source path used in the gallery will be the location where the .vsix files reside when running the PrivateGalleryCreator. If you intend to move the .vsix files after creating the feed, you can specify the intended download source path with the --source option:
+By default, the download source path used in the gallery will be the location where the .vsix files reside when running the PrivateGalleryCreator. If you intend to move the .vsix files after creating the feed, you can specify the intended download source path with the --source option:
 
 ```cmd
 PrivateGalleryCreator.exe --source=c:\your\vsix\repository\
+```
+
+## Terminate option
+If you would like the application to exit immediately after processing VSIX files, use the --terminate option:
+
+```cmd
+PrivateGalleryCreator.exe --terminate
+```
+
+## Latest only option
+By default, any duplicate packages that are found will be processed, resulting in multiple versions of the same package in the feed. If you have a folder structure that retains previous versions of the packages, use the --latest-only option:
+
+```cmd
+PrivateGalleryCreator.exe --latest-only
 ```
 
 ## Good to know
