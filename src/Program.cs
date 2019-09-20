@@ -91,7 +91,10 @@ namespace PrivateGalleryCreator
       var packageFiles = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct();
       var filteredPackageFiles = string.IsNullOrEmpty(_exclude) ? packageFiles : packageFiles.Where(f => !f.FullName.Contains(_exclude));
       var packagesToProcess = filteredPackageFiles.Select(f => ProcessVsix(f.FullName));
-      if (_latestOnly) { packagesToProcess = FilterOutPreviousVersions(packagesToProcess); }
+      if (_latestOnly)
+      {
+        packagesToProcess = packagesToProcess.GroupBy(p => p.ID).Select(g => g.OrderByDescending(pkg => Version.Parse(pkg.Version)).First());
+      }
 
       var writer = new FeedWriter(_galleryName);
       string feedUrl = _outputFile;
@@ -101,32 +104,6 @@ namespace PrivateGalleryCreator
 
       Console.WriteLine();
       Console.WriteLine($"{_outputFile} generated successfully");
-    }
-
-    private static IEnumerable<Package> FilterOutPreviousVersions(IEnumerable<Package> allPackages)
-    {
-      var latestPackages = new Dictionary<string, Package>();
-
-      foreach (var package in allPackages)
-      {
-        if (!latestPackages.ContainsKey(package.ID))
-        {
-          latestPackages.Add(package.ID, package);
-        }
-        else
-        {
-          Version packageVersion;
-          Version latestVersion;
-          Version.TryParse(package.Version, out packageVersion);
-          Version.TryParse(latestPackages[package.ID].Version, out latestVersion);
-          if (packageVersion?.CompareTo(latestVersion) > 0)
-          {
-            latestPackages[package.ID] = package;
-          }
-        }
-      }
-
-      return latestPackages.Values;
     }
 
     private static Package ProcessVsix(string sourceVsixPath)
