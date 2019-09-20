@@ -13,6 +13,7 @@ namespace PrivateGalleryCreator
     private static string _dir;
     private static string _galleryName;
     private static bool _recursive = false;
+    private static bool _latestOnly = false;
     private static string _outputFile;
     private static string _exclude = string.Empty;
 
@@ -26,6 +27,8 @@ namespace PrivateGalleryCreator
       _dir = args.FirstOrDefault(a => a.StartsWith("--input="))?.Replace("--input=", string.Empty) ?? Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
       _recursive = args.Any(a => a == "--recursive");
+
+      _latestOnly = args.Any(a => a == "--latest-only");
 
       _outputFile = args.FirstOrDefault(a => a.StartsWith("--output="))?.Replace("--output=", string.Empty) ?? Path.Combine(_dir, _xmlFileName);
 
@@ -45,7 +48,7 @@ namespace PrivateGalleryCreator
 
         case var a when (a.Contains("--terminate") || a.Contains("-t")):
           break;
-        
+
         default:
           Console.WriteLine("Press any key to close...");
           Console.ReadKey(true);
@@ -85,12 +88,17 @@ namespace PrivateGalleryCreator
 
     private static void GenerateAtomFeed()
     {
-      var packages = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct();
-      var filteredPackages = string.IsNullOrEmpty(_exclude) ? packages : packages.Where(f => !f.FullName.Contains(_exclude));
+      var packageFiles = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct();
+      var filteredPackageFiles = string.IsNullOrEmpty(_exclude) ? packageFiles : packageFiles.Where(f => !f.FullName.Contains(_exclude));
+      var packagesToProcess = filteredPackageFiles.Select(f => ProcessVsix(f.FullName));
+      if (_latestOnly)
+      {
+        packagesToProcess = packagesToProcess.GroupBy(p => p.ID).Select(g => g.OrderByDescending(pkg => Version.Parse(pkg.Version)).First());
+      }
 
       var writer = new FeedWriter(_galleryName);
       string feedUrl = _outputFile;
-      string xml = writer.GetFeed(feedUrl, filteredPackages.Select(f => ProcessVsix(f.FullName)));
+      string xml = writer.GetFeed(feedUrl, packagesToProcess);
 
       File.WriteAllText(feedUrl, xml, Encoding.UTF8);
 
