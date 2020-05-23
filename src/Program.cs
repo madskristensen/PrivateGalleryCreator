@@ -117,27 +117,26 @@ namespace PrivateGalleryCreator
         ZipFile.ExtractToDirectory(sourceVsixPath, tempFolder);
 
         var vsixFile = Path.GetFileName(sourceVsixPath);
+        string vsixSourcePath = null;
 
-        string alternateDestination = Path.Combine(_source, vsixFile);
-
-        // Append the relative path to source
-        if (_recursive)
+        if(String.IsNullOrEmpty(_source))
         {
-          string subFolder = sourceVsixPath.Substring(_dir.Length);
-
-          alternateDestination = Path.Combine(_source, subFolder);
-
-          if (Uri.IsWellFormedUriString(_source, UriKind.RelativeOrAbsolute))
-          {
-            UriBuilder uriBuilder = new UriBuilder(_source);
-
-            uriBuilder.Path = alternateDestination;
-
-            alternateDestination = uriBuilder.Uri.ToString();
-          }
+            vsixSourcePath = sourceVsixPath;
         }
-
-        var vsixSourcePath = string.IsNullOrEmpty(_source) ? sourceVsixPath : alternateDestination;
+        else
+        {
+            string subPath = Path.GetRelativePath(_dir, sourceVsixPath);
+            if (Uri.IsWellFormedUriString(_source, UriKind.Absolute))
+            {
+                UriBuilder uriBuilder = new UriBuilder(_source);
+                uriBuilder.Path = subPath;
+                vsixSourcePath = uriBuilder.Uri.ToString();
+            }
+            else
+            {
+                vsixSourcePath = Path.Combine(_source, subPath);
+            }
+        }
 
         var parser = new VsixManifestParser();
         Package package = parser.CreateFromManifest(tempFolder, vsixFile, vsixSourcePath);
