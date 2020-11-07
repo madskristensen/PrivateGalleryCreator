@@ -1,9 +1,19 @@
 image: Visual Studio 2019
 version: 1.0.{build}
 configuration: Release
+
+dotnet_csproj:
+  patch: true
+  file: ./src/PrivateGalleryCreator.csproj
+  version: '{version}'
+
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./src/PrivateGalleryCreator.csproj --verbosity m
+
 build_script:
-  - ps: ./build.ps1
+  - cmd: dotnet publish ./src/PrivateGalleryCreator.csproj
 
 artifacts:
-  - path: 'src\bin\**\*.exe'
+  - path: 'src\bin\$(configuration)\netcoreapp3.1\publish'
     name: Executable
