@@ -16,4 +16,4 @@ build_script:
 
 artifacts:
   - path: 'src\bin\$(configuration)\netcoreapp3.1\publish'
-    name: Executable
+    name: PrivateGalleryCreator
