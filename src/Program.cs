@@ -129,7 +129,7 @@ namespace PrivateGalleryCreator
             if (Uri.IsWellFormedUriString(_source, UriKind.Absolute))
             {
                 UriBuilder uriBuilder = new UriBuilder(_source);
-                uriBuilder.Path = subPath;
+                uriBuilder.Path += subPath;
                 vsixSourcePath = uriBuilder.Uri.ToString();
             }
             else
