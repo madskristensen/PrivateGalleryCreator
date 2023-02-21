@@ -6,7 +6,7 @@ Download from [releases](https://github.com/madskristensen/PrivateGalleryCreator
 
 -----------------------------
 
-This project creates a [private extension gallery](https://msdn.microsoft.com/en-us/library/hh266746.aspx) that can be consumed by Visual Studio to side-load extensions that are not on the official marketplace.
+This project creates a [private extension gallery](https://learn.microsoft.com/en-us/visualstudio/extensibility/private-galleries) that can be consumed by Visual Studio to side-load extensions that are not on the official marketplace.
 
 You may want to use this to provide a marketplace of private extensions for testing purposes or for extensions that are for internal use only.
 
