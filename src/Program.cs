@@ -18,10 +18,10 @@ namespace PrivateGalleryCreator
     private static string _exclude = string.Empty;
     private static string _devVersion;
 
-        /// <summary>
-        /// When not empty, this folder path will be used as download source for the extensions.
-        /// </summary>
-        private static string _source;
+    /// <summary>
+    /// When not empty, this folder path will be used as download source for the extensions.
+    /// </summary>
+    private static string _source;
 
     private static void Main(string[] args)
     {
@@ -41,14 +41,14 @@ namespace PrivateGalleryCreator
 
       _devVersion = args.FirstOrDefault(a => a.StartsWith("--version="))?.Replace("--version=", string.Empty) ?? "17.0";
 
-        if (Convert.ToSingle(_devVersion.Split('.')[0]) >= 18.0 || Convert.ToSingle(_devVersion.Split('.')[0]) < 11.0 )
-        {
-            Console.WriteLine("The version number is incorrect, please enter the version number of Visual Studio");
-        }
-        else
-        {
-            GenerateAtomFeed();
-        }
+      if (Convert.ToSingle(_devVersion.Split('.')[0]) >= 18.0 || Convert.ToSingle(_devVersion.Split('.')[0]) < 11.0 )
+      {
+        Console.WriteLine("The version number is incorrect, please enter the version number of Visual Studio");
+      }
+      else
+      {
+        GenerateAtomFeed();
+      }
 
       switch (args)
       {
@@ -97,7 +97,7 @@ namespace PrivateGalleryCreator
     }
 
     private static void GenerateAtomFeed()
-    {        
+    {
       var packageFiles = EnumerateFilesSafe(new DirectoryInfo(_dir), "*.vsix", _recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Distinct();
       var filteredPackageFiles = string.IsNullOrEmpty(_exclude) ? packageFiles : packageFiles.Where(f => !f.FullName.Contains(_exclude));
       var packagesToProcess = filteredPackageFiles.Select(f => ProcessVsix(f.FullName));
