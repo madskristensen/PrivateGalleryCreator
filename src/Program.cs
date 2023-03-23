@@ -16,6 +16,7 @@ namespace PrivateGalleryCreator
     private static bool _latestOnly = false;
     private static string _outputFile;
     private static string _exclude = string.Empty;
+    private static string _devVersion;
 
     /// <summary>
     /// When not empty, this folder path will be used as download source for the extensions.
@@ -38,7 +39,16 @@ namespace PrivateGalleryCreator
 
       _source = args.FirstOrDefault(a => a.StartsWith("--source="))?.Replace("--source=", string.Empty) ?? string.Empty;
 
-      GenerateAtomFeed();
+      _devVersion = args.FirstOrDefault(a => a.StartsWith("--version="))?.Replace("--version=", string.Empty) ?? "17.0";
+
+      if (Convert.ToSingle(_devVersion.Split('.')[0]) >= 18.0 || Convert.ToSingle(_devVersion.Split('.')[0]) < 11.0 )
+      {
+        Console.WriteLine("The version number is incorrect, please enter the version number of Visual Studio");
+      }
+      else
+      {
+        GenerateAtomFeed();
+      }
 
       switch (args)
       {
@@ -141,6 +151,7 @@ namespace PrivateGalleryCreator
         var parser = new VsixManifestParser();
         Package package = parser.CreateFromManifest(tempFolder, vsixFile, vsixSourcePath);
 
+        package.DevVersion = _devVersion;
 
         if (!string.IsNullOrEmpty(package.Icon))
         {

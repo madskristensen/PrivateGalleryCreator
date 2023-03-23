@@ -103,8 +103,20 @@ namespace PrivateGalleryCreator
 
             if (package.ExtensionList?.Extensions != null)
             {
-                string ids = string.Join(";", package.ExtensionList.Extensions.Select(e => e.VsixId));
-                writer.WriteElementString("PackedExtensionIDs", ids);
+                if (package.DevVersion.Contains("17"))
+                {
+                    int ExtCount = package.ExtensionList.Extensions.Length;
+                    for (int i = 0; i < ExtCount; i++)
+                    {
+                        writer.WriteElementString("PackedExtensionIDs", package.ExtensionList.Extensions.Select(e => e.VsixId).ElementAt(i));
+                        writer.WriteString("\r\n");
+                    }
+                }
+                else
+                {
+                    string ids = string.Join(";", package.ExtensionList.Extensions.Select(e => e.VsixId));
+                    writer.WriteElementString("PackedExtensionIDs", ids);
+                }
             }
 
             writer.WriteRaw("</Vsix>");// Vsix

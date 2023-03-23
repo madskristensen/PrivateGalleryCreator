@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PrivateGalleryCreator
 {
-	public class Package
+    public class Package
     {
         public Package(string fileName, string fullSourcePath)
         {
@@ -17,6 +17,7 @@ namespace PrivateGalleryCreator
         public string Description { get; set; }
         public string Author { get; set; }
         public string Version { get; set; }
+        public string DevVersion { get; set; }
         public string Icon { get; set; }
         public string Preview { get; set; }
         public string Tags { get; set; }
@@ -35,5 +36,5 @@ namespace PrivateGalleryCreator
 		{
 			return Name;
 		}
-	}
+    }
 }
