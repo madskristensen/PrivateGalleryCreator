@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>dotnet-PrivateGalleryCreator-DD03A4CA-D07C-4F94-B819-AF0367356BBB</UserSecretsId>
     <ApplicationIcon />
     <OutputType>Exe</OutputType>

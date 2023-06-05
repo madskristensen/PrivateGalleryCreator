@@ -1,4 +1,4 @@
-image: Visual Studio 2019
+image: Visual Studio 2022
 version: 1.0.{build}
 configuration: Release
 
@@ -15,5 +15,5 @@ build_script:
   - cmd: dotnet publish src\PrivateGalleryCreator.csproj
 
 artifacts:
-  - path: 'src\bin\$(configuration)\netcoreapp3.1\publish'
+  - path: 'src\bin\$(configuration)\net6.0\publish'
     name: PrivateGalleryCreator
