@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Management;
 
 namespace PrivateGalleryCreator
 {
@@ -64,6 +65,41 @@ namespace PrivateGalleryCreator
           Console.ReadKey(true);
           break;
       }
+    }
+
+    private static string ConvertToNetworPath(string path)
+    {
+      string driveLetter = Path.GetPathRoot(path).TrimEnd('\\');
+      string uncPath = path;
+
+      try
+      {
+        if (OperatingSystem.IsWindows())
+        {
+          using var managementObject = new ManagementObject($"Win32_LogicalDisk='{driveLetter}'");
+          var networkPath = managementObject["ProviderName"]?.ToString();
+
+          if (!string.IsNullOrEmpty(networkPath))
+          {
+            uncPath = string.Concat(networkPath, path.AsSpan(2));
+          }
+        }
+        else
+        {
+          throw new PlatformNotSupportedException("This method is only supported on Windows.");
+        }
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine("Error when determining the network path: " + ex.Message);
+      }
+
+      return uncPath;
+    }
+
+    private static string ConvertToUrl(string path)
+    {
+      return "file:" + path.Replace('\\', '/');
     }
 
     private static void WatchDirectoryForChanges()
@@ -131,21 +167,27 @@ namespace PrivateGalleryCreator
 
         if(String.IsNullOrEmpty(_source))
         {
-            vsixSourcePath = sourceVsixPath;
+          vsixSourcePath = sourceVsixPath;
         }
         else
         {
-            string subPath = Path.GetRelativePath(_dir, sourceVsixPath);
-            if (Uri.IsWellFormedUriString(_source, UriKind.Absolute))
-            {
-                UriBuilder uriBuilder = new UriBuilder(_source);
-                uriBuilder.Path += subPath;
-                vsixSourcePath = uriBuilder.Uri.ToString();
-            }
-            else
-            {
-                vsixSourcePath = Path.Combine(_source, subPath);
-            }
+          string subPath = Path.GetRelativePath(_dir, sourceVsixPath);
+          if (Uri.IsWellFormedUriString(_source, UriKind.Absolute))
+          {
+            UriBuilder uriBuilder = new UriBuilder(_source);
+            uriBuilder.Path += subPath;
+            vsixSourcePath = uriBuilder.Uri.ToString();
+          }
+          else
+          {
+            vsixSourcePath = Path.Combine(_source, subPath);
+          }
+        }
+
+        string uncPath = ConvertToNetworPath(vsixSourcePath);
+        if (uncPath != vsixSourcePath) 
+        {
+          vsixSourcePath = ConvertToUrl(uncPath); 
         }
 
         var parser = new VsixManifestParser();
