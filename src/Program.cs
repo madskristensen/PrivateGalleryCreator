@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -26,7 +26,10 @@ namespace PrivateGalleryCreator
 
     private static void Main(string[] args)
     {
-      _dir = args.FirstOrDefault(a => a.StartsWith("--input="))?.Replace("--input=", string.Empty) ?? Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+      var inputArg = args.FirstOrDefault(a => a.StartsWith("--input="))?.Replace("--input=", string.Empty);
+      _dir = inputArg is not null
+        ? Path.GetFullPath(inputArg)
+        : Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
       _recursive = args.Any(a => a == "--recursive");
 
@@ -69,6 +72,12 @@ namespace PrivateGalleryCreator
 
     private static string ConvertToNetworPath(string path)
     {
+      // Already a UNC path, no conversion needed
+      if (path.StartsWith(@"\\"))
+      {
+        return path;
+      }
+
       string driveLetter = Path.GetPathRoot(path).TrimEnd('\\');
       string uncPath = path;
 
@@ -127,7 +136,7 @@ namespace PrivateGalleryCreator
       fsw.Created += FileChanged;
       fsw.Deleted += FileChanged;
       fsw.Renamed += FileChanged;
-      fsw.IncludeSubdirectories = false;
+      fsw.IncludeSubdirectories = _recursive;
       fsw.EnableRaisingEvents = true;
 
       Console.WriteLine("Watching for file changes...");
