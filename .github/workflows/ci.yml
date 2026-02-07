@@ -76,4 +76,3 @@ jobs:
           tag_name: v${{ steps.version.outputs.VERSION }}
           files: ./PrivateGalleryCreator-v${{ steps.version.outputs.VERSION }}.zip
           generate_release_notes: true
-          generate_release_notes: true
