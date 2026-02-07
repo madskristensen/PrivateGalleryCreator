@@ -99,19 +99,22 @@ namespace PrivateGalleryCreator
 
     private static string ConvertToUrl(string path)
     {
+      // This method is called only for paths returned by ConvertToNetworkPath,
+      // which are UNC paths in the format \\server\share\path (Windows)
       string pathWithForwardSlash = path.Replace('\\', '/');
       
-      // Check if path starts with // (UNC path format)
-      bool isUncFormat = pathWithForwardSlash.StartsWith("//");
+      // UNC paths start with // after slash normalization
+      bool startsWithDoubleSlash = pathWithForwardSlash.StartsWith("//") && 
+                                   !pathWithForwardSlash.StartsWith("///");
       
-      if (isUncFormat)
+      if (startsWithDoubleSlash)
       {
-        // UNC paths: file://server/share/path
+        // UNC network paths: file://server/share/path
         return "file:" + pathWithForwardSlash;
       }
       else
       {
-        // Local paths: file:///C:/path or file:///path
+        // Local absolute paths: file:///C:/path or file:///path
         string trimmedPath = pathWithForwardSlash.TrimStart('/');
         return "file:///" + trimmedPath;
       }
@@ -190,7 +193,7 @@ namespace PrivateGalleryCreator
           if (Uri.IsWellFormedUriString(_source, UriKind.Absolute))
           {
             UriBuilder uriBuilder = new UriBuilder(_source);
-            string normalizedSubPath = subPath.Replace('\\', '/');
+            string normalizedSubPath = subPath.Replace('\\', '/').TrimStart('/');
             uriBuilder.Path = uriBuilder.Path.TrimEnd('/') + "/" + normalizedSubPath;
             vsixSourcePath = uriBuilder.Uri.ToString();
           }
