@@ -125,13 +125,13 @@ namespace PrivateGalleryCreator
             writer.WriteEndElement(); // entry
         }
 
-        private void WriteOptionalMetadataUrls(XmlWriter xmlWriter, Package pkg)
+        private void WriteOptionalMetadataUrls(XmlWriter xmlWriter, Package package)
         {
             var urlMappings = new Dictionary<string, string>
             {
-                { "MoreInfo", pkg.MoreInfoUrl },
-                { "GettingStartedGuide", pkg.GettingStartedUrl },
-                { "ReleaseNotes", pkg.ReleaseNotesUrl }
+                { "MoreInfo", package.MoreInfoUrl },
+                { "GettingStartedGuide", package.GettingStartedUrl },
+                { "ReleaseNotes", package.ReleaseNotesUrl }
             };
 
             foreach (var mapping in urlMappings)
