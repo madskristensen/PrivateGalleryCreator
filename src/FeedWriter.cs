@@ -78,7 +78,7 @@ namespace PrivateGalleryCreator
 
             writer.WriteStartElement("content");
             writer.WriteAttributeString("type", "application/octet-stream");
-            writer.WriteAttributeString("src", package.FullPath);
+            writer.WriteAttributeString("src", package.FileName);
             writer.WriteEndElement(); // content
 
             if (!string.IsNullOrEmpty(package.Icon))
