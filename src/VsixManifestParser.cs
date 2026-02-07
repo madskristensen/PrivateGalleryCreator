@@ -106,6 +106,9 @@ namespace PrivateGalleryCreator
 
 			foreach (XmlNode node in list)
 			{
+				if (node.Attributes == null || node.Attributes["Version"] == null)
+					continue;
+
 				string raw = node.Attributes["Version"].Value.Trim('[', '(', ']', ')');
 				string[] entries = raw.Split(',');
 
