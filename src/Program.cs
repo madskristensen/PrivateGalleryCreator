@@ -172,13 +172,25 @@ namespace PrivateGalleryCreator
         else
         {
           string subPath = Path.GetRelativePath(_dir, sourceVsixPath);
+          
+          // Try to construct URI, but handle network shares that may fail
+          bool uriConstructed = false;
           if (Uri.IsWellFormedUriString(_source, UriKind.Absolute))
           {
-            UriBuilder uriBuilder = new UriBuilder(_source);
-            uriBuilder.Path += subPath;
-            vsixSourcePath = uriBuilder.Uri.ToString();
+            try
+            {
+              UriBuilder uriBuilder = new UriBuilder(_source);
+              uriBuilder.Path += subPath;
+              vsixSourcePath = uriBuilder.Uri.ToString();
+              uriConstructed = true;
+            }
+            catch (UriFormatException)
+            {
+              // Fall through to path-based combination
+            }
           }
-          else
+          
+          if (!uriConstructed)
           {
             vsixSourcePath = Path.Combine(_source, subPath);
           }
