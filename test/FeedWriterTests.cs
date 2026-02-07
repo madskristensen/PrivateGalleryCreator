@@ -232,6 +232,35 @@ public class FeedWriterTests
         Assert.Contains("<Version>", result);
     }
 
+    [Fact]
+    public void GetFeed_PackageWithInstallationTargets_IncludesInstallationsElements()
+    {
+        var package = CreateTestPackage();
+        package.InstallationTargets =
+        [
+            new InstallationTarget("Microsoft.VisualStudio.Community", "[17.0,18.0)"),
+            new InstallationTarget("Microsoft.VisualStudio.Pro", "[17.0,18.0)")
+        ];
+
+        string result = _feedWriter.GetFeed("feed.xml", [package]);
+
+        Assert.Contains("<Installations>", result);
+        Assert.Contains("<Identifier>Microsoft.VisualStudio.Community</Identifier>", result);
+        Assert.Contains("<Identifier>Microsoft.VisualStudio.Pro</Identifier>", result);
+        Assert.Contains("<VersionRange>[17.0,18.0)</VersionRange>", result);
+    }
+
+    [Fact]
+    public void GetFeed_PackageWithNoInstallationTargets_OmitsInstallationsElements()
+    {
+        var package = CreateTestPackage();
+        package.InstallationTargets = null;
+
+        string result = _feedWriter.GetFeed("feed.xml", [package]);
+
+        Assert.DoesNotContain("<Installations>", result);
+    }
+
     private static Package CreateTestPackage(string name = "TestPackage", string version = "1.0.0")
     {
         return new Package("test.vsix", "/path/to/test.vsix")

@@ -57,7 +57,10 @@ public class PackageTests
     public void AllProperties_CanBeSetAndRetrieved()
     {
         var datePublished = DateTime.UtcNow;
-        var supportedVersions = new[] { "17.0", "17.4" };
+        var installationTargets = new[] {
+            new InstallationTarget("Microsoft.VisualStudio.Community", "[17.0,18.0)"),
+            new InstallationTarget("Microsoft.VisualStudio.Pro", "[17.0,18.0)")
+        };
         var extensionList = new ExtensionList
         {
             ID = "list-id",
@@ -77,7 +80,7 @@ public class PackageTests
             Preview = "preview.png",
             Tags = "tag1,tag2",
             DatePublished = datePublished,
-            SupportedVersions = supportedVersions,
+            InstallationTargets = installationTargets,
             License = "MIT License",
             GettingStartedUrl = "https://example.com/start",
             ReleaseNotesUrl = "https://example.com/release",
@@ -99,7 +102,7 @@ public class PackageTests
         Assert.Equal("preview.png", package.Preview);
         Assert.Equal("tag1,tag2", package.Tags);
         Assert.Equal(datePublished, package.DatePublished);
-        Assert.Equal(supportedVersions, package.SupportedVersions);
+        Assert.Equal(installationTargets, package.InstallationTargets);
         Assert.Equal("MIT License", package.License);
         Assert.Equal("https://example.com/start", package.GettingStartedUrl);
         Assert.Equal("https://example.com/release", package.ReleaseNotesUrl);

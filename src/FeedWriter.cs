@@ -107,6 +107,17 @@ namespace PrivateGalleryCreator
             WriteNilElement(writer, "RatingCount", xsiNs);
             WriteNilElement(writer, "DownloadCount", xsiNs);
 
+            if (package.InstallationTargets != null)
+            {
+                foreach (var target in package.InstallationTargets)
+                {
+                    writer.WriteStartElement("Installations");
+                    writer.WriteElementString("Identifier", target.Identifier);
+                    writer.WriteElementString("VersionRange", target.VersionRange);
+                    writer.WriteEndElement(); // Installations
+                }
+            }
+
             if (package.ExtensionList?.Extensions != null)
             {
                 if (package.DevVersion.Contains("17"))

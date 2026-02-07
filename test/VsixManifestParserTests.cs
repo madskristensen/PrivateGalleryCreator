@@ -30,7 +30,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(id: "MyExtension.12345");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("MyExtension.12345", result.ID);
     }
@@ -41,7 +41,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(displayName: "My Extension Name");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("My Extension Name", result.Name);
     }
@@ -52,7 +52,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(description: "A great extension");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("A great extension", result.Description);
     }
@@ -63,7 +63,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(version: "2.5.3.0");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("2.5.3.0", result.Version);
     }
@@ -74,7 +74,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(publisher: "Test Publisher");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("Test Publisher", result.Author);
     }
@@ -85,7 +85,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(icon: "Resources/icon.png");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("Resources/icon.png", result.Icon);
     }
@@ -96,7 +96,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(previewImage: "Resources/preview.png");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("Resources/preview.png", result.Preview);
     }
@@ -107,7 +107,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(tags: "editor,productivity,tools");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("editor,productivity,tools", result.Tags);
     }
@@ -119,7 +119,7 @@ public class VsixManifestParserTests : IDisposable
         WriteManifest(manifest);
         DateTime before = DateTime.UtcNow;
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         DateTime after = DateTime.UtcNow;
         Assert.InRange(result.DatePublished, before, after);
@@ -131,7 +131,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(moreInfoUrl: "https://example.com/info");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("https://example.com/info", result.MoreInfoUrl);
     }
@@ -142,7 +142,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(releaseNotesUrl: "https://example.com/release");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("https://example.com/release", result.ReleaseNotesUrl);
     }
@@ -153,7 +153,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(gettingStartedUrl: "https://example.com/start");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("https://example.com/start", result.GettingStartedUrl);
     }
@@ -168,7 +168,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2010Manifest(id: "OldExtension.789");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("OldExtension.789", result.ID);
     }
@@ -179,7 +179,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2010Manifest(name: "Old Format Extension");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("Old Format Extension", result.Name);
     }
@@ -190,7 +190,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2010Manifest(description: "A VS2010 era extension");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("A VS2010 era extension", result.Description);
     }
@@ -201,7 +201,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2010Manifest(version: "1.0.0.0");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("1.0.0.0", result.Version);
     }
@@ -212,7 +212,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2010Manifest(author: "Legacy Author");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("Legacy Author", result.Author);
     }
@@ -222,15 +222,16 @@ public class VsixManifestParserTests : IDisposable
     #region Supported Versions Tests
 
     [Fact]
-    public void CreateFromManifest_ParsesSingleSupportedVersion()
+    public void CreateFromManifest_ParsesSingleInstallationTarget()
     {
         string manifest = CreateVs2012Manifest(installationTarget: "[17.0,18.0)");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
-        Assert.Contains("17.0", result.SupportedVersions);
-        Assert.Contains("18.0", result.SupportedVersions);
+        var target = Assert.Single(result.InstallationTargets);
+        Assert.Equal("Microsoft.VisualStudio.Community", target.Identifier);
+        Assert.Equal("[17.0,18.0)", target.VersionRange);
     }
 
     [Fact]
@@ -239,9 +240,11 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012ManifestWithMultipleTargets();
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
-        Assert.NotEmpty(result.SupportedVersions);
+        Assert.Equal(2, result.InstallationTargets.Count());
+        Assert.Contains(result.InstallationTargets, t => t.Identifier == "Microsoft.VisualStudio.Community" && t.VersionRange == "[16.0,17.0)");
+        Assert.Contains(result.InstallationTargets, t => t.Identifier == "Microsoft.VisualStudio.Pro" && t.VersionRange == "[17.0,18.0)");
     }
 
     #endregion
@@ -256,7 +259,7 @@ public class VsixManifestParserTests : IDisposable
         string licenseContent = "MIT License - Test Content";
         File.WriteAllText(Path.Combine(_tempFolder, "LICENSE.txt"), licenseContent);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal(licenseContent, result.License);
     }
@@ -267,7 +270,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest(license: "NonExistent.txt");
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Null(result.License);
     }
@@ -278,7 +281,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest();
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Null(result.License);
     }
@@ -304,7 +307,7 @@ public class VsixManifestParserTests : IDisposable
             """;
         File.WriteAllText(Path.Combine(_tempFolder, "extensions.vsext"), vsextContent);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.NotNull(result.ExtensionList);
         Assert.Equal("ext-pack-id", result.ExtensionList.ID);
@@ -317,7 +320,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest();
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Null(result.ExtensionList);
     }
@@ -332,7 +335,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest();
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "MyExtension.vsix", "/source/path");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "MyExtension.vsix", "/source/path");
 
         Assert.Equal("MyExtension.vsix", result.FileName);
     }
@@ -343,7 +346,7 @@ public class VsixManifestParserTests : IDisposable
         string manifest = CreateVs2012Manifest();
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/full/source/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/full/source/path/test.vsix");
 
         Assert.Equal("/full/source/path/test.vsix", result.FullPath);
     }
@@ -370,7 +373,7 @@ public class VsixManifestParserTests : IDisposable
             """;
         WriteManifest(manifest);
 
-        Package result = _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal("Test.Extension", result.ID);
         Assert.Equal("Test Extension", result.Name);
@@ -384,7 +387,7 @@ public class VsixManifestParserTests : IDisposable
     public void CreateFromManifest_WhenManifestFileNotFound_ThrowsFileNotFoundException()
     {
         Assert.Throws<FileNotFoundException>(() =>
-            _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix"));
+            VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix"));
     }
 
     [Fact]
@@ -403,7 +406,7 @@ public class VsixManifestParserTests : IDisposable
         WriteManifest(manifest);
 
         Exception ex = Assert.Throws<Exception>(() =>
-            _parser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix"));
+            VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix"));
 
         Assert.Contains("Id", ex.Message);
     }

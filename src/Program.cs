@@ -227,7 +227,7 @@ namespace PrivateGalleryCreator
         }
 
         var parser = new VsixManifestParser();
-        Package package = parser.CreateFromManifest(tempFolder, vsixFile, vsixSourcePath);
+        Package package = VsixManifestParser.CreateFromManifest(tempFolder, vsixFile, vsixSourcePath);
 
         package.DevVersion = _devVersion;
 
