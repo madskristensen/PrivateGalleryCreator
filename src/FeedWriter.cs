@@ -119,8 +119,28 @@ namespace PrivateGalleryCreator
                 }
             }
 
+            WriteOptionalMetadataUrls(writer, package);
+
             writer.WriteRaw("</Vsix>");// Vsix
             writer.WriteEndElement(); // entry
+        }
+
+        private void WriteOptionalMetadataUrls(XmlWriter writer, Package package)
+        {
+            var urlMappings = new Dictionary<string, string>
+            {
+                { "MoreInfo", package.MoreInfoUrl },
+                { "GettingStartedGuide", package.GettingStartedUrl },
+                { "ReleaseNotes", package.ReleaseNotesUrl }
+            };
+
+            foreach (var mapping in urlMappings)
+            {
+                if (!string.IsNullOrWhiteSpace(mapping.Value))
+                {
+                    writer.WriteElementString(mapping.Key, mapping.Value);
+                }
+            }
         }
     }
 }
