@@ -1,109 +1,155 @@
-# Create VSIX private gallery ATOM feed
+# Private Gallery Creator
 
-[![Build status](https://ci.appveyor.com/api/projects/status/o9t6axyr7n989v75?svg=true)](https://ci.appveyor.com/project/madskristensen/privategallerycreator)
+[![CI](https://github.com/madskristensen/PrivateGalleryCreator/actions/workflows/ci.yml/badge.svg)](https://github.com/madskristensen/PrivateGalleryCreator/actions/workflows/ci.yml)
 
-Download from [releases](https://github.com/madskristensen/PrivateGalleryCreator/releases)
+A command-line tool that generates a private extension gallery for Visual Studio from a folder of `.vsix` files.
 
------------------------------
+[Download the latest release](https://github.com/madskristensen/PrivateGalleryCreator/releases)
 
-This project creates a [private extension gallery](https://learn.microsoft.com/en-us/visualstudio/extensibility/private-galleries) that can be consumed by Visual Studio to side-load extensions that are not on the official marketplace.
+## Why use this?
 
-You may want to use this to provide a marketplace of private extensions for testing purposes or for extensions that are for internal use only.
+The Visual Studio Marketplace is great for public extensions, but sometimes you need to distribute extensions that should not be publicly listed. Common scenarios include:
 
-This project is a simple .exe file that will generate a valid ATOM file from a directory of .vsix files.
+- **Internal tooling.** Your team builds VS extensions for internal use (code generators, project templates, custom analyzers) and needs a central place to install and update them.
+- **Pre-release testing.** You want to distribute beta builds of an extension to a test group before publishing to the Marketplace.
+- **Offline or restricted environments.** Your development machines cannot reach the public Marketplace, but can access a shared network folder or internal web server.
+
+Visual Studio has built-in support for [private extension galleries](https://learn.microsoft.com/en-us/visualstudio/extensibility/private-galleries), but you need to provide a valid ATOM feed that describes the available extensions. This tool generates that feed automatically by reading the metadata from your `.vsix` files.
 
 ## Getting started
-Place all the VSIX files you want to include in the private gallery in the same folder. Then download and add the [PrivateGalleryCreator.exe](https://ci.appveyor.com/project/madskristensen/privategallerycreator/build/artifacts) file and place in the same folder. It should look similar to this:
+
+### 1. Set up a folder with your extensions
+
+Create a folder and place the `.vsix` files you want to distribute inside it. Then add `PrivateGalleryCreator.exe` to the same folder.
 
 ![Filesystem](art/filesystem.png)
 
-Now double-click the *PrivateGalleryCreator.exe* to generate the ATOM feed. It will parse the .vsix files for the information needed and extract the icon files. Your folder should now look like this:
+### 2. Generate the feed
 
-![Filesytem After](art/filesytem-after.png)
+Double-click `PrivateGalleryCreator.exe` (or run it from the command line). It will:
 
-You may not see the *Icons* folder if you don't have any icons registered in the VSIX files or if Windows Explorer doesn't show hidden files and folders. So, don't worry if you don't see it. The ATOM feed will still work.
+1. Parse each `.vsix` file for metadata (name, version, author, description, etc.)
+2. Extract extension icons into a hidden `icons` folder
+3. Generate a `feed.xml` file in the same directory
 
-You can now add the gallery to Visual Studio to have the extensions automatically show up.
+![Filesystem After](art/filesytem-after.png)
+
+> **Note:** The `icons` folder is hidden. If you don't see it, that's expected. The feed will still work correctly.
+
+### 3. Register the gallery in Visual Studio
+
+Open Visual Studio and go to **Tools > Options > Environment > Extensions**. Add a new gallery with the absolute path to the `feed.xml` file. This can be a local path or a network share.
+
+```
+\\mycompany\extensions\feed.xml
+```
 
 ![Options](art/options.png)
 
-The **URL** should be the absolute path to the *feed.xml* file. The path can be a network share (e.g. \\\\mycompany\extensions\feed.xml).
-
-Going to **Tools -> Extensions and Updates...** will now show the private gallery under the **Online** tab:
+The private gallery will now appear under the **Online** tab in the Extensions dialog (**Extensions > Manage Extensions**).
 
 ![Extensions dialog](art/extension-dialog.png)
 
-## Watch option
-You can make the app watch for changes to any .vsix files in the directory and automatically generate a new *feed.xml* file. To do that, call the exe with the `--watch` (`-w`) parameter like so:
+### 4. Keep it updated
+
+Run `PrivateGalleryCreator.exe` again whenever you add, remove, or update a `.vsix` file. Or use the `--watch` option to regenerate the feed automatically on changes (see below).
+
+## Command-line options
+
+All options can be combined. For example:
 
 ```cmd
-PrivateGalleryCreator.exe -w
+PrivateGalleryCreator.exe --input=C:\extensions --output=C:\feed\feed.xml --name="Team Extensions" --recursive --latest-only --terminate
 ```
 
-The console app will not shut down but continously watch the directory for any new, updated or deleted .vsix files. To stop watching, either close the console or hit *Ctrl+C* to cancel out.
+### `--input`
 
-## Name option
-If you would like a custom gallery name (instead of "VSIX Gallery") you can use the --name option:
+Sets the directory to scan for `.vsix` files. Defaults to the directory containing the exe.
 
 ```cmd
-PrivateGalleryCreator.exe --name="My gallery name"
+PrivateGalleryCreator.exe --input=C:\your\extensions\folder
 ```
 
-## Output option
-If you would like to have the output redirected (instead of the current directory) you can use the --output option:
+### `--output`
+
+Sets the output path for the generated feed file. Defaults to `feed.xml` in the input directory.
 
 ```cmd
-PrivateGalleryCreator.exe --output=c:\your\path\yourfeed.xml
+PrivateGalleryCreator.exe --output=C:\your\path\feed.xml
 ```
 
-## Input option
-If you would like to have the input directory set custom (instead of the current directory) you can use the --input option:
+### `--name`
+
+Sets a custom gallery name. Defaults to `"VSIX Gallery"`.
 
 ```cmd
-PrivateGalleryCreator.exe --input=c:\your\input\path 
+PrivateGalleryCreator.exe --name="My Team Gallery"
 ```
 
-## Recursive option
-If you would like to have the all directories parsed for packages (instead of the current directory) you can use the --recursive option:
+### `--recursive`
+
+Scans subdirectories for `.vsix` files in addition to the input directory.
 
 ```cmd
 PrivateGalleryCreator.exe --recursive
 ```
 
-## Exclude option
-If you would like to have the particular folders, filenames skipped (instead of the using all packages found) you can use the --exclude option:
+### `--latest-only`
 
-```cmd
-PrivateGalleryCreator.exe --exclude=dontwantthis
-```
-
-## Source option
-By default, the download source path used in the gallery will be the location where the .vsix files reside when running the PrivateGalleryCreator. If you intend to move the .vsix files after creating the feed, you can specify the intended download source path with the --source option:
-
-```cmd
-PrivateGalleryCreator.exe --source=c:\your\vsix\repository\
-```
-
-## Terminate option
-If you would like the application to exit immediately after processing VSIX files, use the --terminate option:
-
-```cmd
-PrivateGalleryCreator.exe --terminate
-```
-
-## Latest only option
-By default, any duplicate packages that are found will be processed, resulting in multiple versions of the same package in the feed. If you have a folder structure that retains previous versions of the packages, use the --latest-only option:
+When multiple versions of the same extension are found, only the latest version is included in the feed. Useful when your folder retains previous versions.
 
 ```cmd
 PrivateGalleryCreator.exe --latest-only
 ```
 
-## Good to know
+### `--exclude`
 
-* Run the *PrivateGalleryCreator.exe* every time you add or update a .vsix in the directory
-* Visual Studio will by default auto-update extensions - including the ones from private galleries.
-* The feed support extensions for Visual Studio 2010 and newer
-* Use an extension to create the private gallery. See [example extension here](https://github.com/madskristensen/VsixGalleryExtension/blob/master/src/feed.pkgdef).
+Skips any `.vsix` files whose full path contains the specified text.
+
+```cmd
+PrivateGalleryCreator.exe --exclude=experimental
+```
+
+### `--source`
+
+Overrides the download URL used in the feed. By default, the feed references extensions relative to the feed file location. Use this option when the `.vsix` files will be served from a different location than where you run the tool.
+
+```cmd
+PrivateGalleryCreator.exe --source=https://myserver.com/extensions/
+PrivateGalleryCreator.exe --source=\\mycompany\shared\extensions\
+```
+
+### `--watch` (`-w`)
+
+Watches the input directory for changes to `.vsix` files and regenerates the feed automatically. The process runs continuously until you close the console or press `Ctrl+C`.
+
+```cmd
+PrivateGalleryCreator.exe --watch
+```
+
+### `--terminate` (`-t`)
+
+Exits immediately after generating the feed. Without this option, the tool waits for a keypress before closing. Useful for scripts and CI pipelines.
+
+```cmd
+PrivateGalleryCreator.exe --terminate
+```
+
+### `--version`
+
+Sets the target Visual Studio version for the feed. Defaults to `17.0`. This affects how extension pack IDs are serialized in the feed. Valid values are `11.0` through `17.x`.
+
+```cmd
+PrivateGalleryCreator.exe --version=16.0
+```
+
+## Tips
+
+- Visual Studio auto-updates extensions from private galleries, just like it does for Marketplace extensions.
+- The feed supports extensions targeting Visual Studio 2012 and newer.
+- You can register a private gallery through a VS extension using a `.pkgdef` file. See [this example](https://github.com/madskristensen/VsixGalleryExtension/blob/master/src/feed.pkgdef).
+- For CI/CD pipelines, combine `--input`, `--output`, `--source`, and `--terminate` to generate the feed as a build step.
 
 ## License
+
 [Apache 2.0](LICENSE)
