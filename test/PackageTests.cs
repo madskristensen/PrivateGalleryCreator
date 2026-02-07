@@ -58,8 +58,8 @@ public class PackageTests
     {
         var datePublished = DateTime.UtcNow;
         var installationTargets = new[] {
-            new InstallationTarget("Microsoft.VisualStudio.Community", "[17.0,18.0)"),
-            new InstallationTarget("Microsoft.VisualStudio.Pro", "[17.0,18.0)")
+            new InstallationTarget("Microsoft.VisualStudio.Community", "[17.0,18.0)", "amd64"),
+            new InstallationTarget("Microsoft.VisualStudio.Pro", "[17.0,18.0)", "arm64")
         };
         var extensionList = new ExtensionList
         {

@@ -114,6 +114,10 @@ namespace PrivateGalleryCreator
                     writer.WriteStartElement("Installations");
                     writer.WriteElementString("Identifier", target.Identifier);
                     writer.WriteElementString("VersionRange", target.VersionRange);
+                    if (!string.IsNullOrEmpty(target.ProductArchitecture))
+                    {
+                        writer.WriteElementString("ProductArchitecture", target.ProductArchitecture);
+                    }
                     writer.WriteEndElement(); // Installations
                 }
             }

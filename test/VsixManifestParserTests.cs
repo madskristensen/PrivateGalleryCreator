@@ -232,6 +232,7 @@ public class VsixManifestParserTests : IDisposable
         var target = Assert.Single(result.InstallationTargets);
         Assert.Equal("Microsoft.VisualStudio.Community", target.Identifier);
         Assert.Equal("[17.0,18.0)", target.VersionRange);
+        Assert.Equal("amd64", target.ProductArchitecture);
     }
 
     [Fact]
@@ -243,8 +244,55 @@ public class VsixManifestParserTests : IDisposable
         Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
 
         Assert.Equal(2, result.InstallationTargets.Count());
-        Assert.Contains(result.InstallationTargets, t => t.Identifier == "Microsoft.VisualStudio.Community" && t.VersionRange == "[16.0,17.0)");
-        Assert.Contains(result.InstallationTargets, t => t.Identifier == "Microsoft.VisualStudio.Pro" && t.VersionRange == "[17.0,18.0)");
+        Assert.Contains(result.InstallationTargets, t => t.Identifier == "Microsoft.VisualStudio.Community" && t.VersionRange == "[16.0,17.0)" && t.ProductArchitecture == "amd64");
+        Assert.Contains(result.InstallationTargets, t => t.Identifier == "Microsoft.VisualStudio.Pro" && t.VersionRange == "[17.0,18.0)" && t.ProductArchitecture == "arm64");
+    }
+
+    [Fact]
+    public void CreateFromManifest_WhenNoInstallationTargets_ReturnsEmptyList()
+    {
+        string manifest = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <PackageManifest>
+                <Metadata>
+                    <Identity Id="Test.Extension" Version="1.0.0" Publisher="Test" />
+                    <DisplayName>Test Extension</DisplayName>
+                    <Description>Test Description</Description>
+                </Metadata>
+                <Installation />
+            </PackageManifest>
+            """;
+        WriteManifest(manifest);
+
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+
+        Assert.Empty(result.InstallationTargets);
+    }
+
+    [Fact]
+    public void CreateFromManifest_WhenInstallationTargetHasNoArchitecture_ArchitectureIsNull()
+    {
+        string manifest = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <PackageManifest>
+                <Metadata>
+                    <Identity Id="Test.Extension" Version="1.0.0" Publisher="Test" />
+                    <DisplayName>Test Extension</DisplayName>
+                    <Description>Test Description</Description>
+                </Metadata>
+                <Installation>
+                    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)" />
+                </Installation>
+            </PackageManifest>
+            """;
+        WriteManifest(manifest);
+
+        Package result = VsixManifestParser.CreateFromManifest(_tempFolder, "test.vsix", "/path/test.vsix");
+
+        var target = Assert.Single(result.InstallationTargets);
+        Assert.Equal("Microsoft.VisualStudio.Community", target.Identifier);
+        Assert.Equal("[17.0,18.0)", target.VersionRange);
+        Assert.Null(target.ProductArchitecture);
     }
 
     #endregion
@@ -459,7 +507,9 @@ public class VsixManifestParserTests : IDisposable
                     {gettingStartedElement}
                 </Metadata>
                 <Installation>
-                    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="{installationTarget}" />
+                    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="{installationTarget}">
+                        <ProductArchitecture>amd64</ProductArchitecture>
+                    </InstallationTarget>
                 </Installation>
             </PackageManifest>
             """;
@@ -476,8 +526,12 @@ public class VsixManifestParserTests : IDisposable
                     <Description>Test Description</Description>
                 </Metadata>
                 <Installation>
-                    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0,17.0)" />
-                    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,18.0)" />
+                    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0,17.0)">
+                        <ProductArchitecture>amd64</ProductArchitecture>
+                    </InstallationTarget>
+                    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,18.0)">
+                        <ProductArchitecture>arm64</ProductArchitecture>
+                    </InstallationTarget>
                 </Installation>
             </PackageManifest>
             """;

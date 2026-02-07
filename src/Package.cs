@@ -6,7 +6,7 @@ namespace PrivateGalleryCreator
     /// <summary>
     /// Represents a single VSIX installation target (e.g. VS Community, Pro, Enterprise) with its version range.
     /// </summary>
-    public record InstallationTarget(string Identifier, string VersionRange);
+    public record InstallationTarget(string Identifier, string VersionRange, string ProductArchitecture = null);
 
     public class Package(string fileName, string fullSourcePath)
     {

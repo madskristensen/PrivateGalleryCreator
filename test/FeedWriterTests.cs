@@ -238,8 +238,8 @@ public class FeedWriterTests
         var package = CreateTestPackage();
         package.InstallationTargets =
         [
-            new InstallationTarget("Microsoft.VisualStudio.Community", "[17.0,18.0)"),
-            new InstallationTarget("Microsoft.VisualStudio.Pro", "[17.0,18.0)")
+            new InstallationTarget("Microsoft.VisualStudio.Community", "[17.0,18.0)", "amd64"),
+            new InstallationTarget("Microsoft.VisualStudio.Pro", "[17.0,18.0)", "arm64")
         ];
 
         string result = _feedWriter.GetFeed("feed.xml", [package]);
@@ -248,6 +248,8 @@ public class FeedWriterTests
         Assert.Contains("<Identifier>Microsoft.VisualStudio.Community</Identifier>", result);
         Assert.Contains("<Identifier>Microsoft.VisualStudio.Pro</Identifier>", result);
         Assert.Contains("<VersionRange>[17.0,18.0)</VersionRange>", result);
+        Assert.Contains("<ProductArchitecture>amd64</ProductArchitecture>", result);
+        Assert.Contains("<ProductArchitecture>arm64</ProductArchitecture>", result);
     }
 
     [Fact]
@@ -259,6 +261,34 @@ public class FeedWriterTests
         string result = _feedWriter.GetFeed("feed.xml", [package]);
 
         Assert.DoesNotContain("<Installations>", result);
+    }
+
+    [Fact]
+    public void GetFeed_PackageWithEmptyInstallationTargets_OmitsInstallationsElements()
+    {
+        var package = CreateTestPackage();
+        package.InstallationTargets = [];
+
+        string result = _feedWriter.GetFeed("feed.xml", [package]);
+
+        Assert.DoesNotContain("<Installations>", result);
+    }
+
+    [Fact]
+    public void GetFeed_PackageWithInstallationTargetWithoutArchitecture_OmitsProductArchitecture()
+    {
+        var package = CreateTestPackage();
+        package.InstallationTargets =
+        [
+            new InstallationTarget("Microsoft.VisualStudio.Community", "[17.0,18.0)")
+        ];
+
+        string result = _feedWriter.GetFeed("feed.xml", [package]);
+
+        Assert.Contains("<Installations>", result);
+        Assert.Contains("<Identifier>Microsoft.VisualStudio.Community</Identifier>", result);
+        Assert.Contains("<VersionRange>[17.0,18.0)</VersionRange>", result);
+        Assert.DoesNotContain("ProductArchitecture", result);
     }
 
     private static Package CreateTestPackage(string name = "TestPackage", string version = "1.0.0")

@@ -112,7 +112,8 @@ namespace PrivateGalleryCreator
                 if (string.IsNullOrEmpty(identifier) || string.IsNullOrEmpty(versionRange))
                     continue;
 
-                targets.Add(new InstallationTarget(identifier, versionRange));
+                string architecture = node["ProductArchitecture"]?.InnerText;
+                targets.Add(new InstallationTarget(identifier, versionRange, architecture));
             }
 
             return targets;
