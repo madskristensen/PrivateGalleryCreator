@@ -5,6 +5,7 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
+  workflow_dispatch:
 
 env:
   DOTNET_NOLOGO: true
@@ -40,3 +41,39 @@ jobs:
         with:
           name: PrivateGalleryCreator
           path: ./publish
+
+  release:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[release]')
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish self-contained
+        run: dotnet publish src/PrivateGalleryCreator.csproj --configuration Release --runtime win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./release
+
+      - name: Get version
+        id: version
+        run: |
+          $version = (Select-Xml -Path src/PrivateGalleryCreator.csproj -XPath "//Version").Node.InnerText
+          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Create zip
+        run: Compress-Archive -Path ./release/* -DestinationPath ./PrivateGalleryCreator-v${{ steps.version.outputs.VERSION }}.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          files: ./PrivateGalleryCreator-v${{ steps.version.outputs.VERSION }}.zip
+          generate_release_notes: true
+          generate_release_notes: true
