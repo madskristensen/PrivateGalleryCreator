@@ -20,8 +20,11 @@ public class IntegrationTests : IDisposable
         string testOutputDir = AppContext.BaseDirectory;
 
         _testAssetsDir = Path.Combine(testOutputDir, "TestAssets");
+
+        // Infer build configuration from test output path (e.g. .../test/bin/Release/net10.0/)
+        string config = new DirectoryInfo(testOutputDir).Parent!.Name;
         _exePath = Path.Combine(testOutputDir, "..", "..", "..", "..",
-            "src", "bin", "Debug", "net10.0", "PrivateGalleryCreator.exe");
+            "src", "bin", config, "net10.0", "PrivateGalleryCreator.exe");
         _exePath = Path.GetFullPath(_exePath);
 
         _workDir = Path.Combine(Path.GetTempPath(), $"PGC_IntegrationTest_{Guid.NewGuid():N}");
@@ -133,11 +136,10 @@ public class IntegrationTests : IDisposable
     }
 
     /// <summary>
-    /// BUG: --source sets Package.FullPath but FeedWriter writes Package.FileName
-    /// to content/@src and link/@href, so the source URL never appears in the feed.
-    /// This test documents the expected behavior per the README.
+    /// --source sets the download source path used in the feed.
+    /// content/@src and link/@href should reflect the custom source URL.
     /// </summary>
-    [Fact(Skip = "Known bug: --source does not affect feed output. FeedWriter uses Package.FileName instead of Package.FullPath.")]
+    [Fact]
     public void SourceOption_ShouldOverrideDownloadUrlsInFeed()
     {
         CopyAllVsixToWorkDir();

@@ -61,7 +61,7 @@ namespace PrivateGalleryCreator
 
             writer.WriteStartElement("link");
             writer.WriteAttributeString("rel", "alternate");
-            writer.WriteAttributeString("href", package.FileName);
+            writer.WriteAttributeString("href", package.FullPath);
             writer.WriteEndElement(); // link
 
             writer.WriteStartElement("summary");
@@ -78,7 +78,7 @@ namespace PrivateGalleryCreator
 
             writer.WriteStartElement("content");
             writer.WriteAttributeString("type", "application/octet-stream");
-            writer.WriteAttributeString("src", package.FileName);
+            writer.WriteAttributeString("src", package.FullPath);
             writer.WriteEndElement(); // content
 
             if (!string.IsNullOrEmpty(package.Icon))

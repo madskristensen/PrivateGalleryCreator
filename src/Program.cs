@@ -190,11 +190,19 @@ namespace PrivateGalleryCreator
         ZipFile.ExtractToDirectory(sourceVsixPath, tempFolder);
 
         var vsixFile = Path.GetFileName(sourceVsixPath);
-        string vsixSourcePath = null;
+        string vsixSourcePath;
 
         if(String.IsNullOrEmpty(_source))
         {
-          vsixSourcePath = sourceVsixPath;
+          string uncPath = ConvertToNetworPath(sourceVsixPath);
+          if (uncPath != sourceVsixPath)
+          {
+            vsixSourcePath = ConvertToUrl(uncPath);
+          }
+          else
+          {
+            vsixSourcePath = vsixFile;
+          }
         }
         else
         {
@@ -210,12 +218,12 @@ namespace PrivateGalleryCreator
           {
             vsixSourcePath = Path.Combine(_source, subPath);
           }
-        }
 
-        string uncPath = ConvertToNetworPath(vsixSourcePath);
-        if (uncPath != vsixSourcePath) 
-        {
-          vsixSourcePath = ConvertToUrl(uncPath); 
+          string uncPath = ConvertToNetworPath(vsixSourcePath);
+          if (uncPath != vsixSourcePath) 
+          {
+            vsixSourcePath = ConvertToUrl(uncPath); 
+          }
         }
 
         var parser = new VsixManifestParser();

@@ -114,6 +114,38 @@ public class FeedWriterTests
     }
 
     [Fact]
+    public void GetFeed_PackageEntry_ContentSrcUsesFullPath()
+    {
+        var package = CreateTestPackage();
+
+        string result = _feedWriter.GetFeed("feed.xml", [package]);
+
+        XDocument doc = XDocument.Parse(result);
+        XNamespace atom = "http://www.w3.org/2005/Atom";
+        var entry = doc.Root?.Element(atom + "entry");
+        string? src = entry?.Element(atom + "content")?.Attribute("src")?.Value;
+
+        Assert.Equal("/path/to/test.vsix", src);
+    }
+
+    [Fact]
+    public void GetFeed_PackageEntry_LinkHrefUsesFullPath()
+    {
+        var package = CreateTestPackage();
+
+        string result = _feedWriter.GetFeed("feed.xml", [package]);
+
+        XDocument doc = XDocument.Parse(result);
+        XNamespace atom = "http://www.w3.org/2005/Atom";
+        var entry = doc.Root?.Element(atom + "entry");
+        var link = entry?.Elements(atom + "link")
+            .FirstOrDefault(l => l.Attribute("rel")?.Value == "alternate");
+        string? href = link?.Attribute("href")?.Value;
+
+        Assert.Equal("/path/to/test.vsix", href);
+    }
+
+    [Fact]
     public void GetFeed_WithMultiplePackages_CreatesMultipleEntries()
     {
         var packages = new[]
