@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,7 +89,13 @@ namespace PrivateGalleryCreator
                 writer.WriteEndElement(); // icon
             }
 
-            writer.WriteRaw("\r\n<Vsix xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"http://schemas.microsoft.com/developer/vsx-syndication-schema/2010\">\r\n");
+            string vsixNs = "http://schemas.microsoft.com/developer/vsx-syndication-schema/2010";
+            string xsiNs = "http://www.w3.org/2001/XMLSchema-instance";
+            string xsdNs = "http://www.w3.org/2001/XMLSchema";
+
+            writer.WriteStartElement("Vsix", vsixNs);
+            writer.WriteAttributeString("xmlns", "xsi", null, xsiNs);
+            writer.WriteAttributeString("xmlns", "xsd", null, xsdNs);
 
             writer.WriteElementString("Id", package.ID);
             writer.WriteElementString("Version", package.Version);
@@ -97,19 +103,17 @@ namespace PrivateGalleryCreator
             writer.WriteStartElement("References");
             writer.WriteEndElement();
 
-            writer.WriteRaw("\r\n<Rating xsi:nil=\"true\" />");
-            writer.WriteRaw("\r\n<RatingCount xsi:nil=\"true\" />");
-            writer.WriteRaw("\r\n<DownloadCount xsi:nil=\"true\" />\r\n");
+            WriteNilElement(writer, "Rating", xsiNs);
+            WriteNilElement(writer, "RatingCount", xsiNs);
+            WriteNilElement(writer, "DownloadCount", xsiNs);
 
             if (package.ExtensionList?.Extensions != null)
             {
                 if (package.DevVersion.Contains("17"))
                 {
-                    int ExtCount = package.ExtensionList.Extensions.Length;
-                    for (int i = 0; i < ExtCount; i++)
+                    foreach (var extension in package.ExtensionList.Extensions)
                     {
-                        writer.WriteElementString("PackedExtensionIDs", package.ExtensionList.Extensions.Select(e => e.VsixId).ElementAt(i));
-                        writer.WriteString("\r\n");
+                        writer.WriteElementString("PackedExtensionIDs", extension.VsixId);
                     }
                 }
                 else
@@ -121,7 +125,7 @@ namespace PrivateGalleryCreator
 
             WriteOptionalMetadataUrls(writer, package);
 
-            writer.WriteRaw("</Vsix>");// Vsix
+            writer.WriteEndElement(); // Vsix
             writer.WriteEndElement(); // entry
         }
 
@@ -141,6 +145,13 @@ namespace PrivateGalleryCreator
                     writer.WriteElementString(mapping.Key, mapping.Value);
                 }
             }
+        }
+
+        private static void WriteNilElement(XmlWriter writer, string localName, string xsiNamespace)
+        {
+            writer.WriteStartElement(localName);
+            writer.WriteAttributeString("nil", xsiNamespace, "true");
+            writer.WriteEndElement();
         }
     }
 }

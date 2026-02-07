@@ -6,7 +6,7 @@
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
