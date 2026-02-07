@@ -59,10 +59,13 @@ namespace PrivateGalleryCreator
             writer.WriteValue(package.Name);
             writer.WriteEndElement(); // title
 
-            writer.WriteStartElement("link");
-            writer.WriteAttributeString("rel", "alternate");
-            writer.WriteAttributeString("href", package.FullPath);
-            writer.WriteEndElement(); // link
+            if (!string.IsNullOrWhiteSpace(package.MoreInfoUrl))
+            {
+                writer.WriteStartElement("link");
+                writer.WriteAttributeString("rel", "alternate");
+                writer.WriteAttributeString("href", package.MoreInfoUrl);
+                writer.WriteEndElement(); // link
+            }
 
             writer.WriteStartElement("summary");
             writer.WriteAttributeString("type", "text");

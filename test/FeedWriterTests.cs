@@ -129,9 +129,10 @@ public class FeedWriterTests
     }
 
     [Fact]
-    public void GetFeed_PackageEntry_LinkHrefUsesFullPath()
+    public void GetFeed_PackageEntry_LinkHrefUsesMoreInfoUrl()
     {
         var package = CreateTestPackage();
+        package.MoreInfoUrl = "https://example.com/more-info";
 
         string result = _feedWriter.GetFeed("feed.xml", [package]);
 
@@ -142,7 +143,23 @@ public class FeedWriterTests
             .FirstOrDefault(l => l.Attribute("rel")?.Value == "alternate");
         string? href = link?.Attribute("href")?.Value;
 
-        Assert.Equal("/path/to/test.vsix", href);
+        Assert.Equal("https://example.com/more-info", href);
+    }
+
+    [Fact]
+    public void GetFeed_PackageWithoutMoreInfoUrl_OmitsAlternateLink()
+    {
+        var package = CreateTestPackage();
+
+        string result = _feedWriter.GetFeed("feed.xml", [package]);
+
+        XDocument doc = XDocument.Parse(result);
+        XNamespace atom = "http://www.w3.org/2005/Atom";
+        var entry = doc.Root?.Element(atom + "entry");
+        var link = entry?.Elements(atom + "link")
+            .FirstOrDefault(l => l.Attribute("rel")?.Value == "alternate");
+
+        Assert.Null(link);
     }
 
     [Fact]
