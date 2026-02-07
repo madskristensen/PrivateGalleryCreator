@@ -97,6 +97,26 @@ namespace PrivateGalleryCreator
             writer.WriteStartElement("References");
             writer.WriteEndElement();
 
+            // Write documentation URLs when present in package metadata
+            var hasMoreInfoUrl = package.MoreInfoUrl != null && package.MoreInfoUrl.Length > 0;
+            var hasGettingStartedUrl = package.GettingStartedUrl != null && package.GettingStartedUrl.Length > 0;
+            var hasReleaseNotesUrl = package.ReleaseNotesUrl != null && package.ReleaseNotesUrl.Length > 0;
+
+            if (hasMoreInfoUrl)
+            {
+                writer.WriteElementString("MoreInfo", package.MoreInfoUrl);
+            }
+
+            if (hasGettingStartedUrl)
+            {
+                writer.WriteElementString("GettingStartedGuide", package.GettingStartedUrl);
+            }
+
+            if (hasReleaseNotesUrl)
+            {
+                writer.WriteElementString("ReleaseNotes", package.ReleaseNotesUrl);
+            }
+
             writer.WriteRaw("\r\n<Rating xsi:nil=\"true\" />");
             writer.WriteRaw("\r\n<RatingCount xsi:nil=\"true\" />");
             writer.WriteRaw("\r\n<DownloadCount xsi:nil=\"true\" />\r\n");
