@@ -99,7 +99,22 @@ namespace PrivateGalleryCreator
 
     private static string ConvertToUrl(string path)
     {
-      return "file:" + path.Replace('\\', '/');
+      string pathWithForwardSlash = path.Replace('\\', '/');
+      
+      // Check if path starts with // (UNC path format)
+      bool isUncFormat = pathWithForwardSlash.StartsWith("//");
+      
+      if (isUncFormat)
+      {
+        // UNC paths: file://server/share/path
+        return "file:" + pathWithForwardSlash;
+      }
+      else
+      {
+        // Local paths: file:///C:/path or file:///path
+        string trimmedPath = pathWithForwardSlash.TrimStart('/');
+        return "file:///" + trimmedPath;
+      }
     }
 
     private static void WatchDirectoryForChanges()
@@ -175,7 +190,8 @@ namespace PrivateGalleryCreator
           if (Uri.IsWellFormedUriString(_source, UriKind.Absolute))
           {
             UriBuilder uriBuilder = new UriBuilder(_source);
-            uriBuilder.Path += subPath;
+            string normalizedSubPath = subPath.Replace('\\', '/');
+            uriBuilder.Path = uriBuilder.Path.TrimEnd('/') + "/" + normalizedSubPath;
             vsixSourcePath = uriBuilder.Uri.ToString();
           }
           else
