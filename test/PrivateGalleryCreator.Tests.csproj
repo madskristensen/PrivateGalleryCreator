@@ -21,4 +21,8 @@
     <ProjectReference Include="..\src\PrivateGalleryCreator.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="TestAssets\**\*.vsix" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
