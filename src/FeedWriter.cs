@@ -125,7 +125,7 @@ namespace PrivateGalleryCreator
             writer.WriteEndElement(); // entry
         }
 
-        private void WriteOptionalMetadataUrls(XmlWriter xmlWriter, Package package)
+        private void WriteOptionalMetadataUrls(XmlWriter writer, Package package)
         {
             var urlMappings = new Dictionary<string, string>
             {
@@ -138,7 +138,7 @@ namespace PrivateGalleryCreator
             {
                 if (!string.IsNullOrWhiteSpace(mapping.Value))
                 {
-                    xmlWriter.WriteElementString(mapping.Key, mapping.Value);
+                    writer.WriteElementString(mapping.Key, mapping.Value);
                 }
             }
         }
